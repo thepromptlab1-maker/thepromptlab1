@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Prompt Pack — Marketing Agencies</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0c0e;
+    --surface: #13131a;
+    --card: #1a1a26;
+    --border: #2a2a3d;
+    --accent: #f0c060;
+    --accent2: #e07a5f;
+    --accent3: #6c8ebf;
+    --text: #e8e8f0;
+    --muted: #7a7a99;
+    --seo: #6c8ebf;
+    --email: #e07a5f;
+    --social: #7ec8a0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    padding: 60px 40px 40px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(240,192,96,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; right: -60px;
+    width: 350px; height: 350px;
+    background: radial-gradient(circle, rgba(108,142,191,0.1) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    opacity: 0.85;
+  }
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 900;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #f0c060 0%, #e8e8f0 60%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-sub {
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 300;
+    max-width: 520px;
+  }
+  .stats-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* CONTROLS */
+  .controls {
+    padding: 24px 40px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .search-wrap {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    width: 16px;
+    height: 16px;
+  }
+  input[type="search"] {
+    width: 100%;
+    padding: 10px 16px 10px 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type="search"]:focus { border-color: var(--accent); }
+  input[type="search"]::placeholder { color: var(--muted); }
+
+  .filter-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .filter-btn .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .filter-btn.active, .filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(240,192,96,0.08);
+  }
+  .filter-btn[data-cat="seo"].active { border-color: var(--seo); color: var(--seo); background: rgba(108,142,191,0.1); }
+  .filter-btn[data-cat="email"].active { border-color: var(--email); color: var(--email); background: rgba(224,122,95,0.1); }
+  .filter-btn[data-cat="social"].active { border-color: var(--social); color: var(--social); background: rgba(126,200,160,0.1); }
+  .filter-btn[data-cat="all"].active { border-color: var(--accent); color: var(--accent); background: rgba(240,192,96,0.08); }
+
+  /* GRID */
+  main {
+    padding: 32px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    margin-top: 40px;
+  }
+  .section-header:first-child { margin-top: 0; }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .prompt-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 16px;
+  }
+
+  /* CARD */
+  .prompt-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    animation: fadeUp 0.4s ease both;
+  }
+  .prompt-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 12px 12px 0 0;
+  }
+  .prompt-card[data-cat="seo"]::before { background: var(--seo); }
+  .prompt-card[data-cat="email"]::before { background: var(--email); }
+  .prompt-card[data-cat="social"]::before { background: var(--social); }
+  .prompt-card:hover {
+    border-color: rgba(240,192,96,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  [data-cat="seo"] .badge { background: rgba(108,142,191,0.15); color: var(--seo); }
+  [data-cat="email"] .badge { background: rgba(224,122,95,0.15); color: var(--email); }
+  [data-cat="social"] .badge { background: rgba(126,200,160,0.15); color: var(--social); }
+
+  .prompt-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+    font-family: 'DM Mono', monospace;
+    background: rgba(0,0,0,0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    flex: 1;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .prompt-text .placeholder {
+    color: var(--accent);
+    opacity: 0.9;
+  }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .use-case {
+    font-size: 11px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .copy-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .copy-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(240,192,96,0.08);
+  }
+  .copy-btn.copied {
+    border-color: var(--social);
+    color: var(--social);
+    background: rgba(126,200,160,0.1);
+  }
+
+  /* EMPTY */
+  .empty {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 60px;
+    padding: 32px 40px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+    gap: 16px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .footer-tip {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--card);
+    padding: 8px 14px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+
+  @media (max-width: 600px) {
+    header, .controls, main, footer { padding-left: 20px; padding-right: 20px; }
+    .prompt-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">✦ AI Prompt Pack v1.0</div>
+  <h1>Marketing Agency<br>Prompt Arsenal</h1>
+  <p class="header-sub">55 battle-tested AI prompts for SEO, email marketing, and social media. Copy, customize, and deploy.</p>
+  <div class="stats-row">
+    <div class="stat"><span class="stat-num">55</span><span class="stat-label">Prompts</span></div>
+    <div class="stat"><span class="stat-num">3</span><span class="stat-label">Categories</span></div>
+    <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Use Cases</span></div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="search" id="searchInput" placeholder="Search prompts…" oninput="filterPrompts()">
+  </div>
+  <button class="filter-btn active" data-cat="all" onclick="setFilter('all')"><span>All</span></button>
+  <button class="filter-btn" data-cat="seo" onclick="setFilter('seo')"><span class="dot" style="background:var(--seo)"></span>SEO & Content</button>
+  <button class="filter-btn" data-cat="email" onclick="setFilter('email')"><span class="dot" style="background:var(--email)"></span>Email Marketing</button>
+  <button class="filter-btn" data-cat="social" onclick="setFilter('social')"><span class="dot" style="background:var(--social)"></span>Social Media</button>
+</div>
+
+<main id="mainGrid"></main>
+
+<footer>
+  <span>Marketing AI Prompt Pack — 2025</span>
+  <span class="footer-tip">Tip: Replace <span style="color:var(--accent)">[bracketed text]</span> with your client details</span>
+</footer>
+
+<script>
+const prompts = [
+  // ── SEO & CONTENT ──
+  { cat: "seo", title: "Pillar Page Outline", use: "Content strategy", text: "Create a comprehensive pillar page outline for [topic] targeting [primary keyword]. Include 8–10 H2 sections, suggested internal linking opportunities, and a featured snippet target for each section. Audience: [target audience]." },
+  { cat: "seo", title: "Keyword Cluster Map", use: "On-page SEO", text: "Generate a keyword cluster map for the topic [main topic] in the [industry] industry. Group keywords into subtopic clusters, identify search intent (informational/transactional/navigational), and suggest URL structure for each cluster." },
+  { cat: "seo", title: "Meta Title & Description", use: "SERP optimization", text: "Write 5 meta title and description pairs for a page about [topic]. Keep titles under 60 characters and descriptions under 155. Include [primary keyword] naturally. Make each variant test a different emotional hook." },
+  { cat: "seo", title: "FAQ Schema Content", use: "Rich snippets", text: "Generate 8 FAQ questions and detailed answers for [topic/page]. Format for FAQ schema markup. Each answer should be 40–60 words, directly answer the question, and naturally include semantic keywords related to [primary keyword]." },
+  { cat: "seo", title: "Competitor Gap Analysis Brief", use: "Content strategy", text: "Analyze the content gap between [our brand/URL] and [competitor URL] for the keyword [keyword]. Identify topics they rank for that we don't, suggest 5 content pieces to close the gap, and prioritize by estimated traffic opportunity." },
+  { cat: "seo", title: "Long-Form Blog Post", use: "Organic traffic", text: "Write a 1,500-word SEO blog post targeting [primary keyword] for [brand name] in the [industry] niche. Include: compelling H1, 4–6 H2s with H3 subpoints, 2 internal link suggestions, 1 CTA, and a summary section. Tone: [tone]." },
+  { cat: "seo", title: "Product Page Copy", use: "E-commerce SEO", text: "Write SEO-optimized product page copy for [product name] by [brand]. Include: keyword-rich title, 150-word description weaving in [primary keyword] and [secondary keyword], 5 benefit-driven bullet points, and an FAQ section with 3 questions." },
+  { cat: "seo", title: "Internal Linking Strategy", use: "Site architecture", text: "Suggest an internal linking strategy for a new blog post about [new post topic] on [website]. Identify 6–8 existing pages that should link to it, suggest anchor text for each, and recommend 3 pages this new post should link out to." },
+  { cat: "seo", title: "Title Tag A/B Variants", use: "CTR optimization", text: "Write 6 A/B test variants for the title tag of a page targeting [keyword]. Vary the approaches: question format, number-led, power word, how-to, year-based, and benefit-led. All under 60 characters." },
+  { cat: "seo", title: "Content Refresh Brief", use: "Existing content", text: "Audit the following content excerpt and provide a refresh brief: [paste content]. Identify: outdated stats, missing subtopics, opportunities to target [new keyword], recommended additions, and a suggested new H1. Keep what's working." },
+  { cat: "seo", title: "Local SEO Page", use: "Local search", text: "Write a local SEO landing page for [business type] in [city, state]. Include: geo-targeted H1, service description with local modifiers, 3 trust signals, a FAQ section with location-specific questions, and a CTA to [desired action]." },
+  { cat: "seo", title: "Topic Authority Plan", use: "Content planning", text: "Build a 3-month content plan to establish topical authority in [niche] for [brand]. Suggest 12 blog posts grouped into topic clusters, specify the target keyword for each, indicate funnel stage (TOFU/MOFU/BOFU), and recommend publishing order." },
+  { cat: "seo", title: "Schema Markup Brief", use: "Technical SEO", text: "Identify the best schema markup types to implement for a [page type, e.g. service page / recipe / event] for [brand] in [industry]. Explain what to include in each schema type and what SERP features it could unlock." },
+  { cat: "seo", title: "Guest Post Pitch Angles", use: "Link building", text: "Generate 5 guest post pitch angles for [brand] to earn backlinks in the [industry] niche. Each pitch should include: target publication type, working headline, a 3-sentence article summary, and the unique data or insight we'd provide." },
+  { cat: "seo", title: "Semantic SEO Expansion", use: "NLP optimization", text: "Given the primary keyword [keyword], list 20 semantically related terms, entities, and LSI keywords to include in a comprehensive article. Group them by relevance and indicate whether each targets the same or supporting search intent." },
+  { cat: "seo", title: "Voice Search Optimization", use: "Featured snippets", text: "Rewrite the following content section to optimize for voice search and position-zero snippets: [paste content]. Use conversational language, answer the implied question within the first 40 words, and format as a concise paragraph followed by a numbered list." },
+  { cat: "seo", title: "Content Brief Template", use: "Briefing writers", text: "Create a detailed SEO content brief for a writer covering [topic]. Include: target keyword, secondary keywords, recommended word count, content goal, audience persona, outline with H2s and H3s, tone guidelines, competitor articles to beat, and internal link targets." },
+  { cat: "seo", title: "YouTube SEO Description", use: "Video optimization", text: "Write a YouTube video description for a video about [topic] for [channel name]. Include: a keyword-rich first 150 characters (above fold), 3–4 paragraph body with [primary keyword] and [secondary keyword], timestamps placeholders, links section, and hashtags." },
+
+  // ── EMAIL MARKETING ──
+  { cat: "email", title: "Welcome Email Sequence", use: "Onboarding", text: "Write a 4-email welcome sequence for [brand], a [type of business]. Email 1: warm welcome + deliver [lead magnet]. Email 2: brand story. Email 3: social proof + best content. Email 4: soft pitch for [product/service]. Tone: [tone]. Each email max 200 words." },
+  { cat: "email", title: "Cold Outreach Email", use: "B2B prospecting", text: "Write a cold outreach email from [our company] to [prospect company type]. We help [ICP] achieve [outcome] without [pain point]. Include a personalization line, 2-sentence value prop, social proof, and a low-friction CTA. Under 120 words. No buzzwords." },
+  { cat: "email", title: "Abandoned Cart Recovery", use: "E-commerce recovery", text: "Write a 3-email abandoned cart sequence for [product/store name]. Email 1 (1 hr): gentle reminder. Email 2 (24 hrs): address objections + social proof. Email 3 (72 hrs): urgency + offer [discount/bonus]. Each under 150 words. Subject lines included." },
+  { cat: "email", title: "Newsletter Issue", use: "Audience engagement", text: "Write a weekly newsletter issue for [brand] audience of [audience description]. Include: punchy subject line, personal opening hook, 3 curated insights/news items with 2-sentence commentary each, one featured tip, and a brief CTA. Total: ~500 words. Tone: [tone]." },
+  { cat: "email", title: "Re-engagement Campaign", use: "Win-back", text: "Write a 3-email win-back sequence for subscribers inactive for 90+ days for [brand]. Email 1: 'We miss you' with value reminder. Email 2: show what they've missed. Email 3: final 'stay or go' with an incentive of [offer]. Subject lines included." },
+  { cat: "email", title: "Product Launch Sequence", use: "Launch campaigns", text: "Write a 5-email launch sequence for [product name] by [brand]. Include: teaser, announcement, key benefits deep-dive, testimonials + FAQ, and last-chance close. Specify send timing for each. Sales close date: [date]. Price: [price]." },
+  { cat: "email", title: "Subject Line Generator", use: "Open rate testing", text: "Generate 10 email subject lines for an email about [email topic] going to [audience]. Create 2 each of: curiosity gap, number-led, personalization, urgency/scarcity, and benefit-driven. Max 50 characters each. Preview text suggestions for the top 3." },
+  { cat: "email", title: "Post-Purchase Follow-Up", use: "Retention & upsell", text: "Write a post-purchase email sequence (3 emails) for [product] customers of [brand]. Email 1: thank you + delivery info. Email 2: usage tips to ensure success. Email 3: review request + cross-sell [related product]. Tone: warm and helpful." },
+  { cat: "email", title: "Event Invitation Email", use: "Events & webinars", text: "Write an invitation email for [event name], a [webinar/workshop/live event] hosted by [brand] on [date]. Include: compelling headline, 3 reasons to attend, speaker credibility, agenda highlights, and a single CTA button. Create urgency with [limited spots/early bird]." },
+  { cat: "email", title: "Segmentation Personalization", use: "Advanced targeting", text: "Write the same core promotional email for [product] in 3 segmented versions for: (1) new subscribers, (2) past customers, (3) high-value VIP customers. Keep the offer the same but vary the opening hook, social proof, and CTA language for each segment." },
+  { cat: "email", title: "Pain-Point Nurture Email", use: "Mid-funnel nurture", text: "Write a nurture email addressing the pain point of [pain point] for [audience]. Start with an empathy hook, share a short story or stat about the problem, introduce [solution/approach] as the bridge, and end with a soft CTA to [content/call/demo]." },
+  { cat: "email", title: "Referral Program Email", use: "Growth & referrals", text: "Write an email announcing a referral program for [brand]. Explain: the reward for referring ([reward]), how it works (3 simple steps), reward for the referee, and make it feel exclusive. Include a shareable referral link CTA. Tone: excited and generous." },
+  { cat: "email", title: "Case Study Promo Email", use: "Social proof", text: "Write a promotional email featuring a case study for [brand]. Customer: [customer name/type]. Result: [key result]. Structure: hook with the result upfront, backstory (the problem), solution used, 3 key outcomes with data, and CTA to read full case study or book a call." },
+  { cat: "email", title: "Seasonal Campaign Email", use: "Seasonal marketing", text: "Write a seasonal marketing email for [brand] tied to [season/holiday]. Include a relevant hook connecting [brand/product] to the season, a limited-time offer of [offer], 3 product/service highlights, urgency (offer ends [date]), and a clear CTA." },
+  { cat: "email", title: "Survey & Feedback Request", use: "Customer insights", text: "Write an email asking [brand] customers to complete a [X-minute] survey. Explain why their feedback matters, what we'll do with results, offer [incentive if any], make the CTA button frictionless, and keep the whole email under 150 words." },
+  { cat: "email", title: "Milestone Celebration Email", use: "Customer retention", text: "Write a customer milestone celebration email for [brand]. Milestone: [e.g. 1-year anniversary / 10th order / joining the community]. Personalize with [Name], celebrate the milestone warmly, share a stat about their journey, and surprise them with [gift/offer]." },
+  { cat: "email", title: "Thought Leadership Email", use: "B2B authority", text: "Write a thought leadership email from [CEO/founder name] at [brand] sharing an opinion on [industry trend/topic]. Make it conversational and bold — take a real stance. 300 words max. End with one question to spark replies. No hard sell." },
+  { cat: "email", title: "Drip Email: Objection Handler", use: "Sales nurture", text: "Write an email that addresses the objection '[specific objection, e.g. too expensive / not the right time]' for [brand's] product/service. Acknowledge the concern, reframe it, provide a relevant proof point or guarantee, and offer a low-risk next step." },
+
+  // ── SOCIAL MEDIA ──
+  { cat: "social", title: "LinkedIn Thought Leadership", use: "B2B authority", text: "Write a LinkedIn post for [name/brand] sharing a contrarian take on [industry topic]. Start with a bold 1-line hook (no 'I'), follow with a 5–7 line insight using short punchy paragraphs, end with a thought-provoking question. No hashtag spam. ~200 words." },
+  { cat: "social", title: "Instagram Caption Pack", use: "Feed content", text: "Write 5 Instagram captions for [brand] posting about [topic/product]. Vary the styles: storytelling, educational, behind-the-scenes, social proof, and playful/relatable. Each 100–150 words. Include a CTA and 2–3 niche hashtag suggestions per caption." },
+  { cat: "social", title: "Twitter/X Thread", use: "Viral content", text: "Write a Twitter/X thread for [brand/person] on the topic: [topic]. Tweet 1: hook that stops the scroll. Tweets 2–8: one insight per tweet, each building on the last. Tweet 9: summary. Tweet 10: CTA. Keep each tweet under 280 chars. Number them (1/10)." },
+  { cat: "social", title: "Facebook Ad Copy", use: "Paid social", text: "Write Facebook ad copy for [brand] promoting [product/service] to [target audience]. Create 3 variants: (1) pain-led, (2) curiosity-led, (3) transformation-led. Each variant needs: primary text (125 words max), headline (40 chars), description (25 chars), and CTA button choice." },
+  { cat: "social", title: "Monthly Content Calendar", use: "Content planning", text: "Create a 30-day social media content calendar for [brand] across [platforms]. Include: post topic, content format (reel/carousel/static/story), caption hook, and content pillar (educational/entertaining/promotional/community). Mix: 40% educational, 30% entertaining, 20% promotional, 10% community." },
+  { cat: "social", title: "Reel / TikTok Script", use: "Short-form video", text: "Write a 30-second Reel/TikTok script for [brand] on the topic [topic]. Include: attention-grabbing first 2 seconds (on-screen text + action), narration/voiceover script, on-screen text overlays, B-roll suggestions, and a CTA in the final 3 seconds." },
+  { cat: "social", title: "Brand Story Post", use: "Authenticity content", text: "Write a brand origin story post for [brand name] for [platform]. Include: the before (problem founder faced), the turning point moment, how [brand] was born, the mission in one sentence, and a call to community. Make it human and specific — avoid corporate language." },
+  { cat: "social", title: "Product Launch Countdown", use: "Launch hype", text: "Create a 5-post social media countdown series for the launch of [product] by [brand]. Posts for: 5 days out (teaser), 3 days (reveal sneak peek), 1 day (build urgency), launch day (announcement), day after (social proof/testimonial). Include caption + visual description each." },
+  { cat: "social", title: "User-Generated Content Brief", use: "Community content", text: "Write a UGC campaign brief for [brand] to encourage customers to create content about [product/experience]. Include: campaign hashtag idea, what we want customers to show/share, an incentive, 3 sample caption prompts to inspire participants, and a repost strategy." },
+  { cat: "social", title: "Carousel Post Script", use: "Educational content", text: "Write a 7-slide LinkedIn/Instagram carousel for [brand] on [topic]. Slide 1: bold hook headline. Slides 2–6: one insight per slide with a short explanation (max 25 words per slide). Slide 7: summary + CTA. Include alt text suggestions for accessibility." },
+  { cat: "social", title: "Community Response Templates", use: "Engagement & DMs", text: "Write 6 community management response templates for [brand] covering: (1) genuine compliment, (2) product question, (3) complaint/frustration, (4) negative review, (5) partnership inquiry, (6) media/press inquiry. Each response should sound human, on-brand, and move the conversation forward." },
+  { cat: "social", title: "Influencer Brief", use: "Influencer marketing", text: "Write a creator/influencer brief for [brand] campaign promoting [product/service]. Include: campaign objective, key messages (3), what to show/not show, required disclosures, deliverables (format + quantity), posting window, and creative freedom notes. Tone: collaborative, not corporate." },
+  { cat: "social", title: "Stories Content Series", use: "Stories engagement", text: "Plan a 5-day Instagram/Facebook Stories series for [brand] around the theme [theme/launch/event]. For each day include: story type (poll/quiz/countdown/behind-scenes/tutorial), visual concept, text overlay copy, interactive element, and swipe-up/link CTA." },
+  { cat: "social", title: "Social Proof Highlights", use: "Trust building", text: "Write 5 social media posts for [brand] showcasing customer results/testimonials. For each: craft a hook using the customer's result, include a brief story, feature a quote adaptation (paraphrased from: [raw testimonial]), and end with a soft CTA. Keep it specific and credible." },
+  { cat: "social", title: "Newsjacking Post", use: "Trending moments", text: "Write a social post for [brand] that newsjacks the trending topic [trending topic/event]. Connect it relevantly to [brand's niche/product] without being tone-deaf. Keep it timely, clever, and short. Platform: [platform]. Include a suggested visual concept." },
+  { cat: "social", title: "Hashtag Strategy", use: "Reach & discovery", text: "Build a hashtag strategy for [brand] in the [industry] niche on [platform]. Recommend: 5 high-volume hashtags (1M+), 5 mid-tier (100k–1M), 5 niche (under 100k), and 2 branded hashtag ideas. Explain the mix rationale and when to rotate sets." },
+  { cat: "social", title: "Cross-Platform Repurpose", use: "Content efficiency", text: "Take the following long-form content and repurpose it for 4 platforms: [paste blog post or script]. Create: LinkedIn post, Instagram caption, Twitter/X thread opener (hook + first 3 tweets), and a TikTok/Reel hook + talking points. Preserve the core message, adapt the format." },
+  { cat: "social", title: "Competitor Content Audit Prompt", use: "Competitive intel", text: "Analyze the social media content strategy of [competitor brand]. Based on publicly visible patterns, identify: their top content pillars (guess from what performs), posting cadence, hook formulas they use, gaps we could exploit, and 3 content ideas they haven't done that [our brand] could own." },
+];
+
+let currentFilter = 'all';
+
+function getCategoryLabel(cat) {
+  return { seo: 'SEO & Content', email: 'Email Marketing', social: 'Social Media' }[cat] || cat;
+}
+
+function highlightText(text, query) {
+  if (!query) return text;
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return text.replace(regex, '<mark style="background:rgba(240,192,96,0.3);border-radius:2px;color:var(--text)">$1</mark>');
+}
+
+function formatPrompt(text) {
+  return text.replace(/\[([^\]]+)\]/g, '<span class="placeholder">[$1]</span>');
+}
+
+function renderPrompts() {
+  const query = document.getElementById('searchInput').value.toLowerCase().trim();
+  const grid = document.getElementById('mainGrid');
+  grid.innerHTML = '';
+
+  const categories = currentFilter === 'all' ? ['seo','email','social'] : [currentFilter];
+
+  let totalVisible = 0;
+
+  categories.forEach((cat, ci) => {
+    const filtered = prompts.filter(p => p.cat === cat && (
+      !query ||
+      p.title.toLowerCase().includes(query) ||
+      p.text.toLowerCase().includes(query) ||
+      p.use.toLowerCase().includes(query)
+    ));
+
+    if (filtered.length === 0) return;
+    totalVisible += filtered.length;
+
+    // Section header
+    const secEl = document.createElement('div');
+    secEl.className = 'section-header';
+    secEl.innerHTML = `
+      <h2 class="section-title" style="color:var(--${cat})">${getCategoryLabel(cat)}</h2>
+      <div class="section-line"></div>
+      <span class="section-count">${filtered.length} prompts</span>
+    `;
+    grid.appendChild(secEl);
+
+    const g = document.createElement('div');
+    g.className = 'prompt-grid';
+
+    filtered.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = 'prompt-card';
+      card.setAttribute('data-cat', cat);
+      card.style.animationDelay = `${i * 30}ms`;
+
+      const titleHtml = query ? highlightText(p.title, query) : p.title;
+      const promptHtml = formatPrompt(query ? highlightText(p.text, query) : p.text);
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-title">${titleHtml}</div>
+          <span class="badge">${getCategoryLabel(cat)}</span>
+        </div>
+        <div class="prompt-text">${promptHtml}</div>
+        <div class="card-footer">
+          <span class="use-case">↳ ${p.use}</span>
+          <button class="copy-btn" onclick="copyPrompt(this, ${JSON.stringify(p.text).replace(/'/g,"&#39;")})">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy
+          </button>
+        </div>
+      `;
+      g.appendChild(card);
+    });
+
+    grid.appendChild(g);
+  });
+
+  if (totalVisible === 0) {
+    grid.innerHTML = '<div class="empty">No prompts match your search. Try different keywords.</div>';
+  }
+}
+
+function setFilter(cat) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  renderPrompts();
+}
+
+function filterPrompts() {
+  renderPrompts();
+}
+
+function copyPrompt(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Copied!`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2-2v1"/></svg> Copy`;
+    }, 2000);
+  });
+}
+
+renderPrompts();
+</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"5070e21320304a1ba2b0a42ce9682840","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

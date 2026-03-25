@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>The Prompt Lab 1</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-text-size-adjust:100%}
+body{font-family:Georgia,serif;background:#0c0c0e;color:#e8e8f0;min-height:100vh}
+header{padding:36px 20px 28px;border-bottom:1px solid #2a2a3d}
+.tag{font-family:monospace;font-size:10px;letter-spacing:3px;color:#a07828;margin-bottom:12px;text-transform:uppercase}
+h1{font-size:32px;font-weight:700;color:#f0c060;line-height:1.15;margin-bottom:10px}
+.sub{font-family:Arial,sans-serif;color:#7a7a99;font-size:14px;line-height:1.5;max-width:480px}
+.stats{display:flex;gap:24px;margin-top:20px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:3px}
+.sn{font-size:26px;font-weight:700;color:#f0c060;line-height:1}
+.sl{font-family:Arial,sans-serif;font-size:10px;color:#7a7a99;letter-spacing:1px;text-transform:uppercase}
+.controls{position:sticky;top:0;z-index:100;background:#13131a;border-bottom:1px solid #2a2a3d;padding:12px 20px;display:flex;flex-direction:column;gap:8px}
+.search-row{position:relative}
+.search-row svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:#7a7a99;fill:none;stroke-width:2;stroke-linecap:round}
+input[type=search]{width:100%;padding:9px 12px 9px 32px;background:#1a1a26;border:1px solid #2a2a3d;border-radius:7px;color:#e8e8f0;font-family:Arial,sans-serif;font-size:14px;outline:none;-webkit-appearance:none;appearance:none}
+input[type=search]:focus{border-color:#f0c060}
+input[type=search]::placeholder{color:#7a7a99}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.fb{padding:7px 12px;border-radius:6px;border:1px solid #2a2a3d;background:#1a1a26;color:#7a7a99;font-family:Arial,sans-serif;font-size:12px;cursor:pointer;-webkit-appearance:none;appearance:none;display:inline-flex;align-items:center;gap:5px}
+.fb.on{border-color:#f0c060;color:#f0c060;background:rgba(240,192,96,0.07)}
+.fb[data-c=seo].on{border-color:#6c8ebf;color:#6c8ebf;background:rgba(108,142,191,0.08)}
+.fb[data-c=email].on{border-color:#e07a5f;color:#e07a5f;background:rgba(224,122,95,0.08)}
+.fb[data-c=social].on{border-color:#7ec8a0;color:#7ec8a0;background:rgba(126,200,160,0.08)}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+main{padding:20px}
+.sec{margin-bottom:4px;margin-top:28px;padding-bottom:8px;border-bottom:2px solid}
+.sec:first-child{margin-top:0}
+.sec-title{font-size:18px;font-weight:700}
+.sec-count{font-family:monospace;font-size:11px;color:#7a7a99;margin-top:2px}
+.grid{display:grid;grid-template-columns:1fr;gap:12px;margin-top:14px}
+@media(min-width:600px){.grid{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.grid{grid-template-columns:1fr 1fr 1fr}}
+.card{background:#1a1a26;border:1px solid #2a2a3d;border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card[data-c=seo]::before{background:#6c8ebf}
+.card[data-c=email]::before{background:#e07a5f}
+.card[data-c=social]::before{background:#7ec8a0}
+.ct{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.ctitle{font-size:14px;font-weight:700;color:#e8e8f0;line-height:1.35}
+.badge{font-family:monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.card[data-c=seo] .badge{background:rgba(108,142,191,0.15);color:#6c8ebf}
+.card[data-c=email] .badge{background:rgba(224,122,95,0.15);color:#e07a5f}
+.card[data-c=social] .badge{background:rgba(126,200,160,0.15);color:#7ec8a0}
+.ptext{font-family:monospace;font-size:12px;color:#7a7a99;line-height:1.6;background:rgba(0,0,0,0.3);border-radius:6px;padding:10px 11px;flex:1;word-break:break-word;-webkit-user-select:text;user-select:text}
+.cf{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.use{font-family:Arial,sans-serif;font-size:11px;color:#7a7a99;font-style:italic}
+.cbtn{padding:6px 12px;border-radius:5px;border:1px solid #2a2a3d;background:transparent;color:#7a7a99;font-family:Arial,sans-serif;font-size:11px;cursor:pointer;-webkit-appearance:none;min-height:32px}
+.cbtn:active{border-color:#f0c060;color:#f0c060}
+.cbtn.ok{border-color:#7ec8a0;color:#7ec8a0}
+.hidden{display:none}
+.empty{text-align:center;padding:40px 20px;color:#7a7a99;font-family:Arial,sans-serif;font-size:14px}
+footer{padding:20px;border-top:1px solid #2a2a3d;font-family:Arial,sans-serif;font-size:12px;color:#7a7a99;text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+<header>
+  <div class="tag">&#10022; The Prompt Lab 1</div>
+  <h1>Marketing Agency<br>AI Prompt Arsenal</h1>
+  <p class="sub">55 battle-tested AI prompts for SEO, email marketing, and social media.</p>
+  <div class="stats">
+    <div class="stat"><span class="sn">55</span><span class="sl">Prompts</span></div>
+    <div class="stat"><span class="sn">3</span><span class="sl">Categories</span></div>
+    <div class="stat"><span class="sn">&#8734;</span><span class="sl">Use Cases</span></div>
+  </div>
+</header>
+<div class="controls">
+  <div class="search-row">
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="search" id="q" placeholder="Search prompts..." oninput="filter()">
+  </div>
+  <div class="filter-row">
+    <button class="fb on" data-c="all" onclick="setf('all')">All</button>
+    <button class="fb" data-c="seo" onclick="setf('seo')"><span class="dot" style="background:#6c8ebf"></span>SEO</button>
+    <button class="fb" data-c="email" onclick="setf('email')"><span class="dot" style="background:#e07a5f"></span>Email</button>
+    <button class="fb" data-c="social" onclick="setf('social')"><span class="dot" style="background:#7ec8a0"></span>Social</button>
+  </div>
+</div>
+<main id="main">
+<div class="sec" data-c="seo" style="border-color:#6c8ebf"><div class="sec-title" style="color:#6c8ebf">SEO &amp; Content</div><div class="sec-count">18 prompts</div></div>
+<div class="grid" data-c="seo">
+<div class="card" data-c="seo" data-title="pillar page outline" data-text="create a comprehensive pillar page outline for [topic] targeting [primary keyword]. include 8-10 h2 ">
+  <div class="ct"><div class="ctitle">Pillar Page Outline</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Create a comprehensive pillar page outline for <span style="color:#f0c060">[topic]</span> targeting <span style="color:#f0c060">[primary keyword]</span>. Include 8-10 H2 sections, suggested internal linking opportunities, and a featured snippet target for each section. Audience: <span style="color:#f0c060">[target audience]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Content strategy</span>
+    <button class="cbtn" onclick="cp(this,'Create a comprehensive pillar page outline for [topic] targeting [primary keyword]. Include 8-10 H2 sections, suggested internal linking opportunities, and a featured snippet target for each section. Audience: [target audience].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="keyword cluster map" data-text="generate a keyword cluster map for the topic [main topic] in the [industry] industry. group keywords">
+  <div class="ct"><div class="ctitle">Keyword Cluster Map</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Generate a keyword cluster map for the topic <span style="color:#f0c060">[main topic]</span> in the <span style="color:#f0c060">[industry]</span> industry. Group keywords into subtopic clusters, identify search intent (informational/transactional/navigational), and suggest URL structure for each cluster.</div>
+  <div class="cf">
+    <span class="use">&#8627; On-page SEO</span>
+    <button class="cbtn" onclick="cp(this,'Generate a keyword cluster map for the topic [main topic] in the [industry] industry. Group keywords into subtopic clusters, identify search intent (informational/transactional/navigational), and suggest URL structure for each cluster.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="meta title & description" data-text="write 5 meta title and description pairs for a page about [topic]. keep titles under 60 characters a">
+  <div class="ct"><div class="ctitle">Meta Title & Description</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Write 5 meta title and description pairs for a page about <span style="color:#f0c060">[topic]</span>. Keep titles under 60 characters and descriptions under 155. Include <span style="color:#f0c060">[primary keyword]</span> naturally. Make each variant test a different emotional hook.</div>
+  <div class="cf">
+    <span class="use">&#8627; SERP optimization</span>
+    <button class="cbtn" onclick="cp(this,'Write 5 meta title and description pairs for a page about [topic]. Keep titles under 60 characters and descriptions under 155. Include [primary keyword] naturally. Make each variant test a different emotional hook.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="faq schema content" data-text="generate 8 faq questions and detailed answers for [topic/page]. format for faq schema markup. each a">
+  <div class="ct"><div class="ctitle">FAQ Schema Content</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Generate 8 FAQ questions and detailed answers for <span style="color:#f0c060">[topic/page]</span>. Format for FAQ schema markup. Each answer should be 40-60 words, directly answer the question, and naturally include semantic keywords related to <span style="color:#f0c060">[primary keyword]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Rich snippets</span>
+    <button class="cbtn" onclick="cp(this,'Generate 8 FAQ questions and detailed answers for [topic/page]. Format for FAQ schema markup. Each answer should be 40-60 words, directly answer the question, and naturally include semantic keywords related to [primary keyword].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="competitor gap analysis" data-text="analyze the content gap between [our brand/url] and [competitor url] for the keyword [keyword]. iden">
+  <div class="ct"><div class="ctitle">Competitor Gap Analysis</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Analyze the content gap between <span style="color:#f0c060">[our brand/URL]</span> and <span style="color:#f0c060">[competitor URL]</span> for the keyword <span style="color:#f0c060">[keyword]</span>. Identify topics they rank for that we don't, suggest 5 content pieces to close the gap, and prioritize by estimated traffic opportunity.</div>
+  <div class="cf">
+    <span class="use">&#8627; Content strategy</span>
+    <button class="cbtn" onclick="cp(this,'Analyze the content gap between [our brand/URL] and [competitor URL] for the keyword [keyword]. Identify topics they rank for that we don\'t, suggest 5 content pieces to close the gap, and prioritize by estimated traffic opportunity.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="long-form blog post" data-text="write a 1,500-word seo blog post targeting [primary keyword] for [brand name] in the [industry] nich">
+  <div class="ct"><div class="ctitle">Long-Form Blog Post</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Write a 1,500-word SEO blog post targeting <span style="color:#f0c060">[primary keyword]</span> for <span style="color:#f0c060">[brand name]</span> in the <span style="color:#f0c060">[industry]</span> niche. Include: compelling H1, 4-6 H2s with H3 subpoints, 2 internal link suggestions, 1 CTA, and a summary section. Tone: <span style="color:#f0c060">[tone]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Organic traffic</span>
+    <button class="cbtn" onclick="cp(this,'Write a 1,500-word SEO blog post targeting [primary keyword] for [brand name] in the [industry] niche. Include: compelling H1, 4-6 H2s with H3 subpoints, 2 internal link suggestions, 1 CTA, and a summary section. Tone: [tone].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="product page copy" data-text="write seo-optimized product page copy for [product name] by [brand]. include: keyword-rich title, 15">
+  <div class="ct"><div class="ctitle">Product Page Copy</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Write SEO-optimized product page copy for <span style="color:#f0c060">[product name]</span> by <span style="color:#f0c060">[brand]</span>. Include: keyword-rich title, 150-word description weaving in <span style="color:#f0c060">[primary keyword]</span> and <span style="color:#f0c060">[secondary keyword]</span>, 5 benefit-driven bullet points, and an FAQ section with 3 questions.</div>
+  <div class="cf">
+    <span class="use">&#8627; E-commerce SEO</span>
+    <button class="cbtn" onclick="cp(this,'Write SEO-optimized product page copy for [product name] by [brand]. Include: keyword-rich title, 150-word description weaving in [primary keyword] and [secondary keyword], 5 benefit-driven bullet points, and an FAQ section with 3 questions.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="internal linking strategy" data-text="suggest an internal linking strategy for a new blog post about [new post topic] on [website]. identi">
+  <div class="ct"><div class="ctitle">Internal Linking Strategy</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Suggest an internal linking strategy for a new blog post about <span style="color:#f0c060">[new post topic]</span> on <span style="color:#f0c060">[website]</span>. Identify 6-8 existing pages that should link to it, suggest anchor text for each, and recommend 3 pages this new post should link out to.</div>
+  <div class="cf">
+    <span class="use">&#8627; Site architecture</span>
+    <button class="cbtn" onclick="cp(this,'Suggest an internal linking strategy for a new blog post about [new post topic] on [website]. Identify 6-8 existing pages that should link to it, suggest anchor text for each, and recommend 3 pages this new post should link out to.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="title tag a/b variants" data-text="write 6 a/b test variants for the title tag of a page targeting [keyword]. vary the approaches: ques">
+  <div class="ct"><div class="ctitle">Title Tag A/B Variants</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Write 6 A/B test variants for the title tag of a page targeting <span style="color:#f0c060">[keyword]</span>. Vary the approaches: question format, number-led, power word, how-to, year-based, and benefit-led. All under 60 characters.</div>
+  <div class="cf">
+    <span class="use">&#8627; CTR optimization</span>
+    <button class="cbtn" onclick="cp(this,'Write 6 A/B test variants for the title tag of a page targeting [keyword]. Vary the approaches: question format, number-led, power word, how-to, year-based, and benefit-led. All under 60 characters.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="content refresh brief" data-text="audit the following content excerpt and provide a refresh brief: [paste content]. identify: outdated">
+  <div class="ct"><div class="ctitle">Content Refresh Brief</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Audit the following content excerpt and provide a refresh brief: <span style="color:#f0c060">[paste content]</span>. Identify: outdated stats, missing subtopics, opportunities to target <span style="color:#f0c060">[new keyword]</span>, recommended additions, and a suggested new H1.</div>
+  <div class="cf">
+    <span class="use">&#8627; Existing content</span>
+    <button class="cbtn" onclick="cp(this,'Audit the following content excerpt and provide a refresh brief: [paste content]. Identify: outdated stats, missing subtopics, opportunities to target [new keyword], recommended additions, and a suggested new H1.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="local seo page" data-text="write a local seo landing page for [business type] in [city, state]. include: geo-targeted h1, servi">
+  <div class="ct"><div class="ctitle">Local SEO Page</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Write a local SEO landing page for <span style="color:#f0c060">[business type]</span> in <span style="color:#f0c060">[city, state]</span>. Include: geo-targeted H1, service description with local modifiers, 3 trust signals, a FAQ section with location-specific questions, and a CTA to <span style="color:#f0c060">[desired action]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Local search</span>
+    <button class="cbtn" onclick="cp(this,'Write a local SEO landing page for [business type] in [city, state]. Include: geo-targeted H1, service description with local modifiers, 3 trust signals, a FAQ section with location-specific questions, and a CTA to [desired action].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="topic authority plan" data-text="build a 3-month content plan to establish topical authority in [niche] for [brand]. suggest 12 blog ">
+  <div class="ct"><div class="ctitle">Topic Authority Plan</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Build a 3-month content plan to establish topical authority in <span style="color:#f0c060">[niche]</span> for <span style="color:#f0c060">[brand]</span>. Suggest 12 blog posts grouped into topic clusters, specify the target keyword for each, indicate funnel stage (TOFU/MOFU/BOFU), and recommend publishing order.</div>
+  <div class="cf">
+    <span class="use">&#8627; Content planning</span>
+    <button class="cbtn" onclick="cp(this,'Build a 3-month content plan to establish topical authority in [niche] for [brand]. Suggest 12 blog posts grouped into topic clusters, specify the target keyword for each, indicate funnel stage (TOFU/MOFU/BOFU), and recommend publishing order.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="schema markup brief" data-text="identify the best schema markup types to implement for a [page type] for [brand] in [industry]. expl">
+  <div class="ct"><div class="ctitle">Schema Markup Brief</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Identify the best schema markup types to implement for a <span style="color:#f0c060">[page type]</span> for <span style="color:#f0c060">[brand]</span> in <span style="color:#f0c060">[industry]</span>. Explain what to include in each schema type and what SERP features it could unlock.</div>
+  <div class="cf">
+    <span class="use">&#8627; Technical SEO</span>
+    <button class="cbtn" onclick="cp(this,'Identify the best schema markup types to implement for a [page type] for [brand] in [industry]. Explain what to include in each schema type and what SERP features it could unlock.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="guest post pitch angles" data-text="generate 5 guest post pitch angles for [brand] to earn backlinks in the [industry] niche. each pitch">
+  <div class="ct"><div class="ctitle">Guest Post Pitch Angles</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Generate 5 guest post pitch angles for <span style="color:#f0c060">[brand]</span> to earn backlinks in the <span style="color:#f0c060">[industry]</span> niche. Each pitch: target publication type, working headline, 3-sentence article summary, and the unique data or insight we'd provide.</div>
+  <div class="cf">
+    <span class="use">&#8627; Link building</span>
+    <button class="cbtn" onclick="cp(this,'Generate 5 guest post pitch angles for [brand] to earn backlinks in the [industry] niche. Each pitch: target publication type, working headline, 3-sentence article summary, and the unique data or insight we\'d provide.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="semantic seo expansion" data-text="given the primary keyword [keyword], list 20 semantically related terms, entities, and lsi keywords ">
+  <div class="ct"><div class="ctitle">Semantic SEO Expansion</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Given the primary keyword <span style="color:#f0c060">[keyword]</span>, list 20 semantically related terms, entities, and LSI keywords to include in a comprehensive article. Group them by relevance and indicate whether each targets the same or supporting search intent.</div>
+  <div class="cf">
+    <span class="use">&#8627; NLP optimization</span>
+    <button class="cbtn" onclick="cp(this,'Given the primary keyword [keyword], list 20 semantically related terms, entities, and LSI keywords to include in a comprehensive article. Group them by relevance and indicate whether each targets the same or supporting search intent.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="voice search optimization" data-text="rewrite the following content section to optimize for voice search and position-zero snippets: [past">
+  <div class="ct"><div class="ctitle">Voice Search Optimization</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Rewrite the following content section to optimize for voice search and position-zero snippets: <span style="color:#f0c060">[paste content]</span>. Use conversational language, answer the implied question within the first 40 words, and format as a concise paragraph followed by a numbered list.</div>
+  <div class="cf">
+    <span class="use">&#8627; Featured snippets</span>
+    <button class="cbtn" onclick="cp(this,'Rewrite the following content section to optimize for voice search and position-zero snippets: [paste content]. Use conversational language, answer the implied question within the first 40 words, and format as a concise paragraph followed by a numbered list.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="content brief template" data-text="create a detailed seo content brief for a writer covering [topic]. include: target keyword, secondar">
+  <div class="ct"><div class="ctitle">Content Brief Template</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Create a detailed SEO content brief for a writer covering <span style="color:#f0c060">[topic]</span>. Include: target keyword, secondary keywords, recommended word count, content goal, audience persona, outline with H2s and H3s, tone guidelines, competitor articles to beat, and internal link targets.</div>
+  <div class="cf">
+    <span class="use">&#8627; Briefing writers</span>
+    <button class="cbtn" onclick="cp(this,'Create a detailed SEO content brief for a writer covering [topic]. Include: target keyword, secondary keywords, recommended word count, content goal, audience persona, outline with H2s and H3s, tone guidelines, competitor articles to beat, and internal link targets.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="seo" data-title="youtube seo description" data-text="write a youtube video description for a video about [topic] for [channel name]. include: keyword-ric">
+  <div class="ct"><div class="ctitle">YouTube SEO Description</div><span class="badge">SEO &amp; Content</span></div>
+  <div class="ptext">Write a YouTube video description for a video about <span style="color:#f0c060">[topic]</span> for <span style="color:#f0c060">[channel name]</span>. Include: keyword-rich first 150 characters, 3-4 paragraph body with <span style="color:#f0c060">[primary keyword]</span> and <span style="color:#f0c060">[secondary keyword]</span>, timestamps placeholders, links section, and hashtags.</div>
+  <div class="cf">
+    <span class="use">&#8627; Video optimization</span>
+    <button class="cbtn" onclick="cp(this,'Write a YouTube video description for a video about [topic] for [channel name]. Include: keyword-rich first 150 characters, 3-4 paragraph body with [primary keyword] and [secondary keyword], timestamps placeholders, links section, and hashtags.')">Copy</button>
+  </div>
+</div>
+</div>
+<div class="sec" data-c="email" style="border-color:#e07a5f"><div class="sec-title" style="color:#e07a5f">Email Marketing</div><div class="sec-count">18 prompts</div></div>
+<div class="grid" data-c="email">
+<div class="card" data-c="email" data-title="welcome email sequence" data-text="write a 4-email welcome sequence for [brand], a [type of business]. email 1: warm welcome + deliver ">
+  <div class="ct"><div class="ctitle">Welcome Email Sequence</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a 4-email welcome sequence for <span style="color:#f0c060">[brand]</span>, a <span style="color:#f0c060">[type of business]</span>. Email 1: warm welcome + deliver <span style="color:#f0c060">[lead magnet]</span>. Email 2: brand story. Email 3: social proof + best content. Email 4: soft pitch for <span style="color:#f0c060">[product/service]</span>. Tone: <span style="color:#f0c060">[tone]</span>. Each max 200 words.</div>
+  <div class="cf">
+    <span class="use">&#8627; Onboarding</span>
+    <button class="cbtn" onclick="cp(this,'Write a 4-email welcome sequence for [brand], a [type of business]. Email 1: warm welcome + deliver [lead magnet]. Email 2: brand story. Email 3: social proof + best content. Email 4: soft pitch for [product/service]. Tone: [tone]. Each max 200 words.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="cold outreach email" data-text="write a cold outreach email from [our company] to [prospect company type]. we help [icp] achieve [ou">
+  <div class="ct"><div class="ctitle">Cold Outreach Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a cold outreach email from <span style="color:#f0c060">[our company]</span> to <span style="color:#f0c060">[prospect company type]</span>. We help <span style="color:#f0c060">[ICP]</span> achieve <span style="color:#f0c060">[outcome]</span> without <span style="color:#f0c060">[pain point]</span>. Include a personalization line, 2-sentence value prop, social proof, and a low-friction CTA. Under 120 words. No buzzwords.</div>
+  <div class="cf">
+    <span class="use">&#8627; B2B prospecting</span>
+    <button class="cbtn" onclick="cp(this,'Write a cold outreach email from [our company] to [prospect company type]. We help [ICP] achieve [outcome] without [pain point]. Include a personalization line, 2-sentence value prop, social proof, and a low-friction CTA. Under 120 words. No buzzwords.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="abandoned cart recovery" data-text="write a 3-email abandoned cart sequence for [product/store name]. email 1 (1 hr): gentle reminder. e">
+  <div class="ct"><div class="ctitle">Abandoned Cart Recovery</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a 3-email abandoned cart sequence for <span style="color:#f0c060">[product/store name]</span>. Email 1 (1 hr): gentle reminder. Email 2 (24 hrs): address objections + social proof. Email 3 (72 hrs): urgency + offer <span style="color:#f0c060">[discount/bonus]</span>. Each under 150 words. Subject lines included.</div>
+  <div class="cf">
+    <span class="use">&#8627; E-commerce recovery</span>
+    <button class="cbtn" onclick="cp(this,'Write a 3-email abandoned cart sequence for [product/store name]. Email 1 (1 hr): gentle reminder. Email 2 (24 hrs): address objections + social proof. Email 3 (72 hrs): urgency + offer [discount/bonus]. Each under 150 words. Subject lines included.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="newsletter issue" data-text="write a weekly newsletter issue for [brand] audience of [audience description]. include: punchy subj">
+  <div class="ct"><div class="ctitle">Newsletter Issue</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a weekly newsletter issue for <span style="color:#f0c060">[brand]</span> audience of <span style="color:#f0c060">[audience description]</span>. Include: punchy subject line, personal opening hook, 3 curated insights with 2-sentence commentary each, one featured tip, and a brief CTA. Total: ~500 words. Tone: <span style="color:#f0c060">[tone]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Audience engagement</span>
+    <button class="cbtn" onclick="cp(this,'Write a weekly newsletter issue for [brand] audience of [audience description]. Include: punchy subject line, personal opening hook, 3 curated insights with 2-sentence commentary each, one featured tip, and a brief CTA. Total: ~500 words. Tone: [tone].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="re-engagement campaign" data-text="write a 3-email win-back sequence for subscribers inactive for 90+ days for [brand]. email 1: we mis">
+  <div class="ct"><div class="ctitle">Re-engagement Campaign</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a 3-email win-back sequence for subscribers inactive for 90+ days for <span style="color:#f0c060">[brand]</span>. Email 1: we miss you + value reminder. Email 2: show what they have missed. Email 3: final stay or go with an incentive of <span style="color:#f0c060">[offer]</span>. Subject lines included.</div>
+  <div class="cf">
+    <span class="use">&#8627; Win-back</span>
+    <button class="cbtn" onclick="cp(this,'Write a 3-email win-back sequence for subscribers inactive for 90+ days for [brand]. Email 1: we miss you + value reminder. Email 2: show what they have missed. Email 3: final stay or go with an incentive of [offer]. Subject lines included.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="product launch sequence" data-text="write a 5-email launch sequence for [product name] by [brand]. include: teaser, announcement, key be">
+  <div class="ct"><div class="ctitle">Product Launch Sequence</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a 5-email launch sequence for <span style="color:#f0c060">[product name]</span> by <span style="color:#f0c060">[brand]</span>. Include: teaser, announcement, key benefits deep-dive, testimonials + FAQ, and last-chance close. Specify send timing for each. Sales close date: <span style="color:#f0c060">[date]</span>. Price: <span style="color:#f0c060">[price]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Launch campaigns</span>
+    <button class="cbtn" onclick="cp(this,'Write a 5-email launch sequence for [product name] by [brand]. Include: teaser, announcement, key benefits deep-dive, testimonials + FAQ, and last-chance close. Specify send timing for each. Sales close date: [date]. Price: [price].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="subject line generator" data-text="generate 10 email subject lines for an email about [email topic] going to [audience]. create 2 each ">
+  <div class="ct"><div class="ctitle">Subject Line Generator</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Generate 10 email subject lines for an email about <span style="color:#f0c060">[email topic]</span> going to <span style="color:#f0c060">[audience]</span>. Create 2 each of: curiosity gap, number-led, personalization, urgency/scarcity, and benefit-driven. Max 50 characters each. Preview text for the top 3.</div>
+  <div class="cf">
+    <span class="use">&#8627; Open rate testing</span>
+    <button class="cbtn" onclick="cp(this,'Generate 10 email subject lines for an email about [email topic] going to [audience]. Create 2 each of: curiosity gap, number-led, personalization, urgency/scarcity, and benefit-driven. Max 50 characters each. Preview text for the top 3.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="post-purchase follow-up" data-text="write a post-purchase email sequence (3 emails) for [product] customers of [brand]. email 1: thank y">
+  <div class="ct"><div class="ctitle">Post-Purchase Follow-Up</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a post-purchase email sequence (3 emails) for <span style="color:#f0c060">[product]</span> customers of <span style="color:#f0c060">[brand]</span>. Email 1: thank you + delivery info. Email 2: usage tips to ensure success. Email 3: review request + cross-sell <span style="color:#f0c060">[related product]</span>. Tone: warm and helpful.</div>
+  <div class="cf">
+    <span class="use">&#8627; Retention & upsell</span>
+    <button class="cbtn" onclick="cp(this,'Write a post-purchase email sequence (3 emails) for [product] customers of [brand]. Email 1: thank you + delivery info. Email 2: usage tips to ensure success. Email 3: review request + cross-sell [related product]. Tone: warm and helpful.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="event invitation email" data-text="write an invitation email for [event name], a [webinar/workshop/event] hosted by [brand] on [date]. ">
+  <div class="ct"><div class="ctitle">Event Invitation Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write an invitation email for <span style="color:#f0c060">[event name]</span>, a <span style="color:#f0c060">[webinar/workshop/event]</span> hosted by <span style="color:#f0c060">[brand]</span> on <span style="color:#f0c060">[date]</span>. Include: compelling headline, 3 reasons to attend, speaker credibility, agenda highlights, and a single CTA button. Create urgency with <span style="color:#f0c060">[limited spots/early bird]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Events & webinars</span>
+    <button class="cbtn" onclick="cp(this,'Write an invitation email for [event name], a [webinar/workshop/event] hosted by [brand] on [date]. Include: compelling headline, 3 reasons to attend, speaker credibility, agenda highlights, and a single CTA button. Create urgency with [limited spots/early bird].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="segmentation personalization" data-text="write the same promotional email for [product] in 3 segmented versions for: (1) new subscribers, (2)">
+  <div class="ct"><div class="ctitle">Segmentation Personalization</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write the same promotional email for <span style="color:#f0c060">[product]</span> in 3 segmented versions for: (1) new subscribers, (2) past customers, (3) VIP customers. Keep the offer the same but vary the opening hook, social proof, and CTA language for each segment.</div>
+  <div class="cf">
+    <span class="use">&#8627; Advanced targeting</span>
+    <button class="cbtn" onclick="cp(this,'Write the same promotional email for [product] in 3 segmented versions for: (1) new subscribers, (2) past customers, (3) VIP customers. Keep the offer the same but vary the opening hook, social proof, and CTA language for each segment.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="pain-point nurture email" data-text="write a nurture email addressing the pain point of [pain point] for [audience]. start with an empath">
+  <div class="ct"><div class="ctitle">Pain-Point Nurture Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a nurture email addressing the pain point of <span style="color:#f0c060">[pain point]</span> for <span style="color:#f0c060">[audience]</span>. Start with an empathy hook, share a short story or stat about the problem, introduce <span style="color:#f0c060">[solution/approach]</span> as the bridge, and end with a soft CTA to <span style="color:#f0c060">[content/call/demo]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Mid-funnel nurture</span>
+    <button class="cbtn" onclick="cp(this,'Write a nurture email addressing the pain point of [pain point] for [audience]. Start with an empathy hook, share a short story or stat about the problem, introduce [solution/approach] as the bridge, and end with a soft CTA to [content/call/demo].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="referral program email" data-text="write an email announcing a referral program for [brand]. explain: the reward for referring ([reward">
+  <div class="ct"><div class="ctitle">Referral Program Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write an email announcing a referral program for <span style="color:#f0c060">[brand]</span>. Explain: the reward for referring (<span style="color:#f0c060">[reward]</span>), how it works in 3 simple steps, reward for the referee, and make it feel exclusive. Include a shareable referral link CTA. Tone: excited and generous.</div>
+  <div class="cf">
+    <span class="use">&#8627; Growth & referrals</span>
+    <button class="cbtn" onclick="cp(this,'Write an email announcing a referral program for [brand]. Explain: the reward for referring ([reward]), how it works in 3 simple steps, reward for the referee, and make it feel exclusive. Include a shareable referral link CTA. Tone: excited and generous.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="case study promo email" data-text="write a promotional email featuring a case study for [brand]. customer: [customer name/type]. result">
+  <div class="ct"><div class="ctitle">Case Study Promo Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a promotional email featuring a case study for <span style="color:#f0c060">[brand]</span>. Customer: <span style="color:#f0c060">[customer name/type]</span>. Result: <span style="color:#f0c060">[key result]</span>. Structure: hook with result upfront, backstory, solution used, 3 key outcomes with data, and CTA to read full case study or book a call.</div>
+  <div class="cf">
+    <span class="use">&#8627; Social proof</span>
+    <button class="cbtn" onclick="cp(this,'Write a promotional email featuring a case study for [brand]. Customer: [customer name/type]. Result: [key result]. Structure: hook with result upfront, backstory, solution used, 3 key outcomes with data, and CTA to read full case study or book a call.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="seasonal campaign email" data-text="write a seasonal marketing email for [brand] tied to [season/holiday]. include a relevant hook conne">
+  <div class="ct"><div class="ctitle">Seasonal Campaign Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a seasonal marketing email for <span style="color:#f0c060">[brand]</span> tied to <span style="color:#f0c060">[season/holiday]</span>. Include a relevant hook connecting <span style="color:#f0c060">[brand/product]</span> to the season, a limited-time offer of <span style="color:#f0c060">[offer]</span>, 3 product highlights, urgency (offer ends <span style="color:#f0c060">[date]</span>), and a clear CTA.</div>
+  <div class="cf">
+    <span class="use">&#8627; Seasonal marketing</span>
+    <button class="cbtn" onclick="cp(this,'Write a seasonal marketing email for [brand] tied to [season/holiday]. Include a relevant hook connecting [brand/product] to the season, a limited-time offer of [offer], 3 product highlights, urgency (offer ends [date]), and a clear CTA.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="survey & feedback request" data-text="write an email asking [brand] customers to complete a [x-minute] survey. explain why their feedback ">
+  <div class="ct"><div class="ctitle">Survey & Feedback Request</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write an email asking <span style="color:#f0c060">[brand]</span> customers to complete a <span style="color:#f0c060">[X-minute]</span> survey. Explain why their feedback matters, what we will do with results, offer <span style="color:#f0c060">[incentive if any]</span>, make the CTA frictionless, and keep the whole email under 150 words.</div>
+  <div class="cf">
+    <span class="use">&#8627; Customer insights</span>
+    <button class="cbtn" onclick="cp(this,'Write an email asking [brand] customers to complete a [X-minute] survey. Explain why their feedback matters, what we will do with results, offer [incentive if any], make the CTA frictionless, and keep the whole email under 150 words.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="milestone celebration email" data-text="write a customer milestone celebration email for [brand]. milestone: [e.g. 1-year anniversary / 10th">
+  <div class="ct"><div class="ctitle">Milestone Celebration Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a customer milestone celebration email for <span style="color:#f0c060">[brand]</span>. Milestone: <span style="color:#f0c060">[e.g. 1-year anniversary / 10th order]</span>. Personalize with <span style="color:#f0c060">[Name]</span>, celebrate the milestone warmly, share a stat about their journey, and surprise them with <span style="color:#f0c060">[gift/offer]</span>.</div>
+  <div class="cf">
+    <span class="use">&#8627; Customer retention</span>
+    <button class="cbtn" onclick="cp(this,'Write a customer milestone celebration email for [brand]. Milestone: [e.g. 1-year anniversary / 10th order]. Personalize with [Name], celebrate the milestone warmly, share a stat about their journey, and surprise them with [gift/offer].')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="thought leadership email" data-text="write a thought leadership email from [ceo/founder name] at [brand] sharing an opinion on [industry ">
+  <div class="ct"><div class="ctitle">Thought Leadership Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write a thought leadership email from <span style="color:#f0c060">[CEO/founder name]</span> at <span style="color:#f0c060">[brand]</span> sharing an opinion on <span style="color:#f0c060">[industry trend/topic]</span>. Make it conversational and bold. 300 words max. End with one question to spark replies. No hard sell.</div>
+  <div class="cf">
+    <span class="use">&#8627; B2B authority</span>
+    <button class="cbtn" onclick="cp(this,'Write a thought leadership email from [CEO/founder name] at [brand] sharing an opinion on [industry trend/topic]. Make it conversational and bold. 300 words max. End with one question to spark replies. No hard sell.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="email" data-title="objection handler email" data-text="write an email that addresses the objection [specific objection, e.g. too expensive] for [brand] pro">
+  <div class="ct"><div class="ctitle">Objection Handler Email</div><span class="badge">Email Marketing</span></div>
+  <div class="ptext">Write an email that addresses the objection <span style="color:#f0c060">[specific objection, e.g. too expensive]</span> for <span style="color:#f0c060">[brand]</span> product/service. Acknowledge the concern, reframe it, provide a relevant proof point or guarantee, and offer a low-risk next step.</div>
+  <div class="cf">
+    <span class="use">&#8627; Sales nurture</span>
+    <button class="cbtn" onclick="cp(this,'Write an email that addresses the objection [specific objection, e.g. too expensive] for [brand] product/service. Acknowledge the concern, reframe it, provide a relevant proof point or guarantee, and offer a low-risk next step.')">Copy</button>
+  </div>
+</div>
+</div>
+<div class="sec" data-c="social" style="border-color:#7ec8a0"><div class="sec-title" style="color:#7ec8a0">Social Media</div><div class="sec-count">18 prompts</div></div>
+<div class="grid" data-c="social">
+<div class="card" data-c="social" data-title="linkedin thought leadership" data-text="write a linkedin post for [name/brand] sharing a contrarian take on [industry topic]. start with a b">
+  <div class="ct"><div class="ctitle">LinkedIn Thought Leadership</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a LinkedIn post for <span style="color:#f0c060">[name/brand]</span> sharing a contrarian take on <span style="color:#f0c060">[industry topic]</span>. Start with a bold 1-line hook (no I), follow with 5-7 lines of insight using short punchy paragraphs, end with a thought-provoking question. No hashtag spam. ~200 words.</div>
+  <div class="cf">
+    <span class="use">&#8627; B2B authority</span>
+    <button class="cbtn" onclick="cp(this,'Write a LinkedIn post for [name/brand] sharing a contrarian take on [industry topic]. Start with a bold 1-line hook (no I), follow with 5-7 lines of insight using short punchy paragraphs, end with a thought-provoking question. No hashtag spam. ~200 words.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="instagram caption pack" data-text="write 5 instagram captions for [brand] posting about [topic/product]. vary the styles: storytelling,">
+  <div class="ct"><div class="ctitle">Instagram Caption Pack</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write 5 Instagram captions for <span style="color:#f0c060">[brand]</span> posting about <span style="color:#f0c060">[topic/product]</span>. Vary the styles: storytelling, educational, behind-the-scenes, social proof, and playful/relatable. Each 100-150 words. Include a CTA and 2-3 niche hashtag suggestions per caption.</div>
+  <div class="cf">
+    <span class="use">&#8627; Feed content</span>
+    <button class="cbtn" onclick="cp(this,'Write 5 Instagram captions for [brand] posting about [topic/product]. Vary the styles: storytelling, educational, behind-the-scenes, social proof, and playful/relatable. Each 100-150 words. Include a CTA and 2-3 niche hashtag suggestions per caption.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="twitter/x thread" data-text="write a twitter/x thread for [brand/person] on the topic: [topic]. tweet 1: hook that stops the scro">
+  <div class="ct"><div class="ctitle">Twitter/X Thread</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a Twitter/X thread for <span style="color:#f0c060">[brand/person]</span> on the topic: <span style="color:#f0c060">[topic]</span>. Tweet 1: hook that stops the scroll. Tweets 2-8: one insight per tweet, each building on the last. Tweet 9: summary. Tweet 10: CTA. Keep each tweet under 280 chars. Number them (1/10).</div>
+  <div class="cf">
+    <span class="use">&#8627; Viral content</span>
+    <button class="cbtn" onclick="cp(this,'Write a Twitter/X thread for [brand/person] on the topic: [topic]. Tweet 1: hook that stops the scroll. Tweets 2-8: one insight per tweet, each building on the last. Tweet 9: summary. Tweet 10: CTA. Keep each tweet under 280 chars. Number them (1/10).')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="facebook ad copy" data-text="write facebook ad copy for [brand] promoting [product/service] to [target audience]. create 3 varian">
+  <div class="ct"><div class="ctitle">Facebook Ad Copy</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write Facebook ad copy for <span style="color:#f0c060">[brand]</span> promoting <span style="color:#f0c060">[product/service]</span> to <span style="color:#f0c060">[target audience]</span>. Create 3 variants: (1) pain-led, (2) curiosity-led, (3) transformation-led. Each needs: primary text (125 words max), headline (40 chars), description (25 chars), and CTA choice.</div>
+  <div class="cf">
+    <span class="use">&#8627; Paid social</span>
+    <button class="cbtn" onclick="cp(this,'Write Facebook ad copy for [brand] promoting [product/service] to [target audience]. Create 3 variants: (1) pain-led, (2) curiosity-led, (3) transformation-led. Each needs: primary text (125 words max), headline (40 chars), description (25 chars), and CTA choice.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="monthly content calendar" data-text="create a 30-day social media content calendar for [brand] across [platforms]. include: post topic, c">
+  <div class="ct"><div class="ctitle">Monthly Content Calendar</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Create a 30-day social media content calendar for <span style="color:#f0c060">[brand]</span> across <span style="color:#f0c060">[platforms]</span>. Include: post topic, content format (reel/carousel/static/story), caption hook, and content pillar (educational/entertaining/promotional/community). Mix: 40% educational, 30% entertaining, 20% promotional, 10% community.</div>
+  <div class="cf">
+    <span class="use">&#8627; Content planning</span>
+    <button class="cbtn" onclick="cp(this,'Create a 30-day social media content calendar for [brand] across [platforms]. Include: post topic, content format (reel/carousel/static/story), caption hook, and content pillar (educational/entertaining/promotional/community). Mix: 40% educational, 30% entertaining, 20% promotional, 10% community.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="reel / tiktok script" data-text="write a 30-second reel/tiktok script for [brand] on the topic [topic]. include: attention-grabbing f">
+  <div class="ct"><div class="ctitle">Reel / TikTok Script</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a 30-second Reel/TikTok script for <span style="color:#f0c060">[brand]</span> on the topic <span style="color:#f0c060">[topic]</span>. Include: attention-grabbing first 2 seconds, narration/voiceover script, on-screen text overlays, B-roll suggestions, and a CTA in the final 3 seconds.</div>
+  <div class="cf">
+    <span class="use">&#8627; Short-form video</span>
+    <button class="cbtn" onclick="cp(this,'Write a 30-second Reel/TikTok script for [brand] on the topic [topic]. Include: attention-grabbing first 2 seconds, narration/voiceover script, on-screen text overlays, B-roll suggestions, and a CTA in the final 3 seconds.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="brand story post" data-text="write a brand origin story post for [brand name] for [platform]. include: the before (problem founde">
+  <div class="ct"><div class="ctitle">Brand Story Post</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a brand origin story post for <span style="color:#f0c060">[brand name]</span> for <span style="color:#f0c060">[platform]</span>. Include: the before (problem founder faced), the turning point, how <span style="color:#f0c060">[brand]</span> was born, the mission in one sentence, and a call to community. Make it human and specific.</div>
+  <div class="cf">
+    <span class="use">&#8627; Authenticity content</span>
+    <button class="cbtn" onclick="cp(this,'Write a brand origin story post for [brand name] for [platform]. Include: the before (problem founder faced), the turning point, how [brand] was born, the mission in one sentence, and a call to community. Make it human and specific.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="product launch countdown" data-text="create a 5-post social media countdown for the launch of [product] by [brand]. posts for: 5 days out">
+  <div class="ct"><div class="ctitle">Product Launch Countdown</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Create a 5-post social media countdown for the launch of <span style="color:#f0c060">[product]</span> by <span style="color:#f0c060">[brand]</span>. Posts for: 5 days out (teaser), 3 days (sneak peek), 1 day (urgency), launch day (announcement), day after (social proof). Include caption + visual description each.</div>
+  <div class="cf">
+    <span class="use">&#8627; Launch hype</span>
+    <button class="cbtn" onclick="cp(this,'Create a 5-post social media countdown for the launch of [product] by [brand]. Posts for: 5 days out (teaser), 3 days (sneak peek), 1 day (urgency), launch day (announcement), day after (social proof). Include caption + visual description each.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="ugc campaign brief" data-text="write a ugc campaign brief for [brand] to encourage customers to create content about [product/exper">
+  <div class="ct"><div class="ctitle">UGC Campaign Brief</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a UGC campaign brief for <span style="color:#f0c060">[brand]</span> to encourage customers to create content about <span style="color:#f0c060">[product/experience]</span>. Include: campaign hashtag idea, what to show/share, an incentive, 3 sample caption prompts to inspire participants, and a repost strategy.</div>
+  <div class="cf">
+    <span class="use">&#8627; Community content</span>
+    <button class="cbtn" onclick="cp(this,'Write a UGC campaign brief for [brand] to encourage customers to create content about [product/experience]. Include: campaign hashtag idea, what to show/share, an incentive, 3 sample caption prompts to inspire participants, and a repost strategy.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="carousel post script" data-text="write a 7-slide linkedin/instagram carousel for [brand] on [topic]. slide 1: bold hook headline. sli">
+  <div class="ct"><div class="ctitle">Carousel Post Script</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a 7-slide LinkedIn/Instagram carousel for <span style="color:#f0c060">[brand]</span> on <span style="color:#f0c060">[topic]</span>. Slide 1: bold hook headline. Slides 2-6: one insight per slide with a short explanation (max 25 words per slide). Slide 7: summary + CTA. Include alt text suggestions.</div>
+  <div class="cf">
+    <span class="use">&#8627; Educational content</span>
+    <button class="cbtn" onclick="cp(this,'Write a 7-slide LinkedIn/Instagram carousel for [brand] on [topic]. Slide 1: bold hook headline. Slides 2-6: one insight per slide with a short explanation (max 25 words per slide). Slide 7: summary + CTA. Include alt text suggestions.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="community response templates" data-text="write 6 community management response templates for [brand] covering: (1) genuine compliment, (2) pr">
+  <div class="ct"><div class="ctitle">Community Response Templates</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write 6 community management response templates for <span style="color:#f0c060">[brand]</span> covering: (1) genuine compliment, (2) product question, (3) complaint/frustration, (4) negative review, (5) partnership inquiry, (6) media/press inquiry. Each should sound human and on-brand.</div>
+  <div class="cf">
+    <span class="use">&#8627; Engagement & DMs</span>
+    <button class="cbtn" onclick="cp(this,'Write 6 community management response templates for [brand] covering: (1) genuine compliment, (2) product question, (3) complaint/frustration, (4) negative review, (5) partnership inquiry, (6) media/press inquiry. Each should sound human and on-brand.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="influencer brief" data-text="write a creator/influencer brief for [brand] campaign promoting [product/service]. include: campaign">
+  <div class="ct"><div class="ctitle">Influencer Brief</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a creator/influencer brief for <span style="color:#f0c060">[brand]</span> campaign promoting <span style="color:#f0c060">[product/service]</span>. Include: campaign objective, key messages (3), what to show/not show, required disclosures, deliverables (format + quantity), posting window, and creative freedom notes.</div>
+  <div class="cf">
+    <span class="use">&#8627; Influencer marketing</span>
+    <button class="cbtn" onclick="cp(this,'Write a creator/influencer brief for [brand] campaign promoting [product/service]. Include: campaign objective, key messages (3), what to show/not show, required disclosures, deliverables (format + quantity), posting window, and creative freedom notes.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="stories content series" data-text="plan a 5-day instagram/facebook stories series for [brand] around the theme [theme/launch/event]. fo">
+  <div class="ct"><div class="ctitle">Stories Content Series</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Plan a 5-day Instagram/Facebook Stories series for <span style="color:#f0c060">[brand]</span> around the theme <span style="color:#f0c060">[theme/launch/event]</span>. For each day include: story type (poll/quiz/countdown/behind-scenes/tutorial), visual concept, text overlay copy, interactive element, and link CTA.</div>
+  <div class="cf">
+    <span class="use">&#8627; Stories engagement</span>
+    <button class="cbtn" onclick="cp(this,'Plan a 5-day Instagram/Facebook Stories series for [brand] around the theme [theme/launch/event]. For each day include: story type (poll/quiz/countdown/behind-scenes/tutorial), visual concept, text overlay copy, interactive element, and link CTA.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="social proof highlights" data-text="write 5 social media posts for [brand] showcasing customer results/testimonials. for each: craft a h">
+  <div class="ct"><div class="ctitle">Social Proof Highlights</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write 5 social media posts for <span style="color:#f0c060">[brand]</span> showcasing customer results/testimonials. For each: craft a hook using the customer result, include a brief story, feature a quote from <span style="color:#f0c060">[raw testimonial]</span>, and end with a soft CTA. Keep it specific and credible.</div>
+  <div class="cf">
+    <span class="use">&#8627; Trust building</span>
+    <button class="cbtn" onclick="cp(this,'Write 5 social media posts for [brand] showcasing customer results/testimonials. For each: craft a hook using the customer result, include a brief story, feature a quote from [raw testimonial], and end with a soft CTA. Keep it specific and credible.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="newsjacking post" data-text="write a social post for [brand] that newsjacks the trending topic [trending topic/event]. connect it">
+  <div class="ct"><div class="ctitle">Newsjacking Post</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Write a social post for <span style="color:#f0c060">[brand]</span> that newsjacks the trending topic <span style="color:#f0c060">[trending topic/event]</span>. Connect it relevantly to <span style="color:#f0c060">[brand niche/product]</span> without being tone-deaf. Keep it timely, clever, and short. Platform: <span style="color:#f0c060">[platform]</span>. Include a suggested visual concept.</div>
+  <div class="cf">
+    <span class="use">&#8627; Trending moments</span>
+    <button class="cbtn" onclick="cp(this,'Write a social post for [brand] that newsjacks the trending topic [trending topic/event]. Connect it relevantly to [brand niche/product] without being tone-deaf. Keep it timely, clever, and short. Platform: [platform]. Include a suggested visual concept.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="hashtag strategy" data-text="build a hashtag strategy for [brand] in the [industry] niche on [platform]. recommend: 5 high-volume">
+  <div class="ct"><div class="ctitle">Hashtag Strategy</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Build a hashtag strategy for <span style="color:#f0c060">[brand]</span> in the <span style="color:#f0c060">[industry]</span> niche on <span style="color:#f0c060">[platform]</span>. Recommend: 5 high-volume hashtags (1M+), 5 mid-tier (100k-1M), 5 niche (under 100k), and 2 branded hashtag ideas. Explain the mix rationale and when to rotate sets.</div>
+  <div class="cf">
+    <span class="use">&#8627; Reach & discovery</span>
+    <button class="cbtn" onclick="cp(this,'Build a hashtag strategy for [brand] in the [industry] niche on [platform]. Recommend: 5 high-volume hashtags (1M+), 5 mid-tier (100k-1M), 5 niche (under 100k), and 2 branded hashtag ideas. Explain the mix rationale and when to rotate sets.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="cross-platform repurpose" data-text="take the following long-form content and repurpose it for 4 platforms: [paste blog post or script]. ">
+  <div class="ct"><div class="ctitle">Cross-Platform Repurpose</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Take the following long-form content and repurpose it for 4 platforms: <span style="color:#f0c060">[paste blog post or script]</span>. Create: LinkedIn post, Instagram caption, Twitter/X thread opener (hook + first 3 tweets), and a TikTok/Reel hook + talking points.</div>
+  <div class="cf">
+    <span class="use">&#8627; Content efficiency</span>
+    <button class="cbtn" onclick="cp(this,'Take the following long-form content and repurpose it for 4 platforms: [paste blog post or script]. Create: LinkedIn post, Instagram caption, Twitter/X thread opener (hook + first 3 tweets), and a TikTok/Reel hook + talking points.')">Copy</button>
+  </div>
+</div>
+<div class="card" data-c="social" data-title="competitor content audit" data-text="analyze the social media content strategy of [competitor brand]. identify: their top content pillars">
+  <div class="ct"><div class="ctitle">Competitor Content Audit</div><span class="badge">Social Media</span></div>
+  <div class="ptext">Analyze the social media content strategy of <span style="color:#f0c060">[competitor brand]</span>. Identify: their top content pillars, posting cadence, hook formulas they use, gaps we could exploit, and 3 content ideas they have not done that <span style="color:#f0c060">[our brand]</span> could own.</div>
+  <div class="cf">
+    <span class="use">&#8627; Competitive intel</span>
+    <button class="cbtn" onclick="cp(this,'Analyze the social media content strategy of [competitor brand]. Identify: their top content pillars, posting cadence, hook formulas they use, gaps we could exploit, and 3 content ideas they have not done that [our brand] could own.')">Copy</button>
+  </div>
+</div>
+</div>
+</main>
+<footer>The Prompt Lab 1 &copy; 2025 &nbsp;&bull;&nbsp; Replace <span style="color:#f0c060">[bracketed text]</span> with your client details</footer>
+<div id="empty" class="empty hidden">No prompts match your search.</div>
+<script>
+var cf = 'all';
+function setf(c) {
+  cf = c;
+  document.querySelectorAll('.fb').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-c')===c); });
+  filter();
+}
+function filter() {
+  var q = (document.getElementById('q').value || '').toLowerCase();
+  var cards = document.querySelectorAll('.card');
+  var secs = document.querySelectorAll('.sec');
+  var grids = document.querySelectorAll('.grid');
+  var shown = 0;
+  cards.forEach(function(card) {
+    var c = card.getAttribute('data-c');
+    var t = card.getAttribute('data-title') || '';
+    var tx = card.getAttribute('data-text') || '';
+    var matchCat = cf === 'all' || c === cf;
+    var matchQ = !q || t.indexOf(q) > -1 || tx.indexOf(q) > -1 || card.querySelector('.ptext').textContent.toLowerCase().indexOf(q) > -1;
+    card.style.display = (matchCat && matchQ) ? '' : 'none';
+    if (matchCat && matchQ) shown++;
+  });
+  secs.forEach(function(sec) {
+    var c = sec.getAttribute('data-c');
+    var matchCat = cf === 'all' || c === cf;
+    sec.style.display = matchCat ? '' : 'none';
+  });
+  grids.forEach(function(g) {
+    var c = g.getAttribute('data-c');
+    var matchCat = cf === 'all' || c === cf;
+    g.style.display = matchCat ? '' : 'none';
+  });
+  var em = document.getElementById('empty');
+  em.classList.toggle('hidden', shown > 0);
+}
+function cp(btn, text) {
+  var t = text.replace(/\n/g, '
+');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t).then(function(){ ok(btn); }).catch(function(){ fallback(btn, t); });
+  } else { fallback(btn, t); }
+}
+function fallback(btn, t) {
+  var ta = document.createElement('textarea');
+  ta.value = t;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); ok(btn); } catch(e) { btn.textContent = 'Select text above'; }
+  document.body.removeChild(ta);
+}
+function ok(btn) {
+  btn.classList.add('ok');
+  btn.textContent = 'Copied!';
+  setTimeout(function(){ btn.classList.remove('ok'); btn.textContent = 'Copy'; }, 2000);
+}
+</script>
+</body>
+</html>
